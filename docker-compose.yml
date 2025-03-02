@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  model_server:
+    build: ./model_server
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./model_server:/app
+    restart: always

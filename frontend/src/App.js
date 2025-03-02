@@ -3,7 +3,7 @@ import axios from "axios";
 
 function App() {
     const [image, setImage] = useState(null);
-    const [result, setResult] = useState(null);
+    const [processedImage, setProcessedImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ function App() {
         const file = event.target.files[0];
         if (file) {
             setImage(file);
-            setPreview(URL.createObjectURL(file)); // Show preview of uploaded image
+            setPreview(URL.createObjectURL(file)); 
             setError(null);
         }
     };
@@ -24,20 +24,17 @@ function App() {
         }
 
         const formData = new FormData();
-        formData.append("image", image);
+        formData.append("file", image);
+
         setLoading(true);
         setError(null);
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/upload/", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            const response = await axios.post("http://localhost:8000/upload/", formData, {
+                responseType: "blob",
             });
 
-            if (response.data.processed) {
-                setResult(response.data);
-            } else {
-                setError("Processed image not received from the server.");
-            }
+            setProcessedImage(URL.createObjectURL(response.data));
         } catch (error) {
             setError("Error uploading the image. Please check the server.");
             console.error("Error:", error);
@@ -57,7 +54,6 @@ function App() {
 
             {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
 
-            {/* Image Display Section */}
             <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "20px" }}>
                 {preview && (
                     <div>
@@ -66,10 +62,10 @@ function App() {
                     </div>
                 )}
 
-                {result && result.processed && (
+                {processedImage && (
                     <div>
                         <h3>Processed Image</h3>
-                        <img src={result.processed} alt="Processed" style={{ width: "300px", border: "1px solid #ddd", borderRadius: "8px" }} />
+                        <img src={processedImage} alt="Processed" style={{ width: "300px", border: "1px solid #ddd", borderRadius: "8px" }} />
                     </div>
                 )}
             </div>
