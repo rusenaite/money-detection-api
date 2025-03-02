@@ -1,30 +1,30 @@
 # AI-Powered Banknote Detection
 
 ## Overview
-Web-based solution that allows users to upload images for analysis using an AI model running on a virtual server. The model detects and identifies banknotes.
+Web-based solution that allows users to upload images for analysis using an AI model running in a **Dockerized FastAPI server**. The model detects and identifies banknotes.
 
 ![web_app](web_app.png)
 
 ## Technologies & Libraries Used
-- **Backend:** Django, Django REST Framework
-- **AI Model:** YOLO
+- **Backend:** Django, Django REST Framework, FastAPI (Dockerized)
+- **AI Model:** YOLO (Ultralytics)
 - **Image Processing:** OpenCV
 - **Frontend:** React, JavaScript, Axios
-- **Server & Storage:** Django Media Storage, Local Development Server
+- **Server & Storage:** Django Media Storage, Local Development Server, FastAPI in Docker
 
 ## System Workflow
 1. User uploads an image via the web interface.
-2. The image is sent to the Django API for processing.
-3. The AI model detects banknotes and marks them on the image.
-4. The processed image and a summary of detected banknotes are returned to the frontend.
-5. The results are displayed side by side with the original image.
+2. The image is sent to the Django API.
+3. Django forwards the image to the **FastAPI model server running in Docker**.
+4. The AI model detects banknotes and marks them on the image.
+5. The processed image is returned to Django, then displayed on the frontend.
 
 ## How to Run the System
-### **Backend Setup**
+### **Backend Setup (Django)**
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/your-repo.git
-   cd your-repo
+   git clone https://github.com/rusenaite/money-detection-api.git
+   cd money-detection-api
    ```
 2. Create a virtual environment and install dependencies:
    ```bash
@@ -35,15 +35,23 @@ Web-based solution that allows users to upload images for analysis using an AI m
 3. Apply migrations and run the server:
    ```bash
    python manage.py migrate
-   python manage.py runserver
-   ```
-4. Ensure media files are correctly served by updating `settings.py`:
-   ```python
-   MEDIA_URL = '/media/'
-   MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+   python manage.py runserver 0.0.0.0:8000
    ```
 
-### **Frontend Setup**
+### **FastAPI Model Server (Dockerized)**
+1. Navigate to `model_server` directory:
+   ```bash
+   cd model_server
+   ```
+2. **Build and run the Docker container:**
+   ```bash
+   docker build -t model_server .
+   docker run -p 8001:8001 model_server
+   ```
+
+3. **FastAPI should now be running on:** `http://localhost:8001`
+
+### **Frontend Setup (React)**
 1. Navigate to the frontend directory:
    ```bash
    cd frontend
@@ -63,4 +71,4 @@ Web-based solution that allows users to upload images for analysis using an AI m
 - The processed image is displayed alongside the original.
 
 ## What could be improved
-- Implement a more advanced AI model and train it with a larger dataset. For better precision, work with different parameters and train with more epochs.
+- Optimize model performance and inference speed.
